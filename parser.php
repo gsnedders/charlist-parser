@@ -45,7 +45,7 @@ function get_characters_in_charlist($charlist)
 						elseif ($unicode_semantics && !$unicode_charlist)
 						{
 							$chr = chr($j);
-							settype($j, 'binary');
+							settype($chr, 'binary');
 							$characters[] = $chr;
 						}
 						// $charlist follows unicode_semantics
