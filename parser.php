@@ -8,7 +8,7 @@ function get_characters_in_charlist($charlist)
 	
 	if ($complex_unicode)
 	{
-		$double_full_stop = chr(0x2E) . chr(0x2E);
+		$double_full_stop = unicode_decode("\x00\x00\x00\x2E\x00\x00\x00\x2E", 'UTF-32BE');
 	}
 	else
 	{
