@@ -4,12 +4,21 @@ declare(encoding="utf-8");
 function get_characters_in_charlist($charlist)
 {
 	$characters = array();
-	$complex_unicode = (version_compare(phpversion(), '6', '>=') && !unicode_semantics() && is_unicode($charlist)) ? true : false;
+	$unicode_semantics = (version_compare(phpversion(), '6', '>=') && unicode_semantics()) ? true : false;
+	$unicode_charlist = (version_compare(phpversion(), '6', '>=') && is_unicode($charlist)) ? true : false;
 	
-	if ($complex_unicode)
+	// unicode_semantics=off yet $charlist is a unicode string
+	if (!$unicode && is_unicode($charlist))
 	{
 		$double_full_stop = unicode_decode("\x00\x00\x00\x2E\x00\x00\x00\x2E", 'UTF-32BE');
 	}
+	// unicode_semantics=on yet $charlist is a binary string
+	elseif ($unicode)
+	{
+		$double_full_stop = '..';
+		settype($double_full_stop, 'binary');
+	}
+	// $charlist follows unicode_semantics
 	else
 	{
 		$double_full_stop = '..';
@@ -27,10 +36,19 @@ function get_characters_in_charlist($charlist)
 				{
 					for (; $j <= $k; $j++)
 					{
-						if ($complex_unicode)
+						// unicode_semantics=off yet $charlist is a unicode string
+						if (!$unicode && is_unicode($charlist))
 						{
 							$characters[] = unicode_decode(pack('N', $j), 'UTF-32BE');
 						}
+						// unicode_semantics=on yet $charlist is a binary string
+						elseif ($unicode)
+						{
+							$chr = chr($j);
+							settype($j, 'binary');
+							$characters[] = $chr;
+						}
+						// $charlist follows unicode_semantics
 						else
 						{
 							$characters[] = chr($j);
