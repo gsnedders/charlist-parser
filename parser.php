@@ -13,7 +13,7 @@ function get_characters_in_charlist($charlist)
 		$double_full_stop = unicode_decode("\x00\x00\x00\x2E\x00\x00\x00\x2E", 'UTF-32BE');
 	}
 	// unicode_semantics=on yet $charlist is a binary string
-	elseif ($unicode_semantics)
+	elseif ($unicode_semantics && !$unicode_charlist)
 	{
 		$double_full_stop = '..';
 		settype($double_full_stop, 'binary');
@@ -42,7 +42,7 @@ function get_characters_in_charlist($charlist)
 							$characters[] = unicode_decode(pack('N', $j), 'UTF-32BE');
 						}
 						// unicode_semantics=on yet $charlist is a binary string
-						elseif ($unicode_semantics)
+						elseif ($unicode_semantics && !$unicode_charlist)
 						{
 							$chr = chr($j);
 							settype($j, 'binary');
