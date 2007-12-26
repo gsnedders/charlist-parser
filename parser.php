@@ -4,11 +4,20 @@ declare(encoding="utf-8");
 function get_characters_in_charlist($charlist)
 {
 	$characters = array();
-	$complex_unicode_chr = (version_compare(phpversion(), '6', '>=') && !unicode_semantics() && is_unicode($charlist)) ? true : false;
+	$complex_unicode = (version_compare(phpversion(), '6', '>=') && !unicode_semantics() && is_unicode($charlist)) ? true : false;
+	
+	if ($complex_unicode)
+	{
+		$double_full_stop = chr(0x2E) . chr(0x2E);
+	}
+	else
+	{
+		$double_full_stop = '..';
+	}
 	
 	for ($i = 0, $len = strlen($charlist); $i < $len; $i++)
 	{
-		if ($i + 2 < $len && substr($charlist, $i + 1, 2) === '..')
+		if ($i + 2 < $len && substr($charlist, $i + 1, 2) === $double_full_stop)
 		{
 			if ($i + 3 < $len)
 			{
@@ -18,7 +27,7 @@ function get_characters_in_charlist($charlist)
 				{
 					for (; $j <= $k; $j++)
 					{
-						if ($complex_unicode_chr)
+						if ($complex_unicode)
 						{
 							$characters[] = unicode_decode(pack('N', $j), 'UTF-32BE');
 						}
@@ -42,7 +51,7 @@ function get_characters_in_charlist($charlist)
 				$characters[] = $charlist[$i];
 			}
 		}
-		elseif (substr($charlist, $i, 2) === '..')
+		elseif (substr($charlist, $i, 2) === $double_full_stop)
 		{
 			if ($i === 0)
 			{
